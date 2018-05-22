@@ -10,5 +10,5 @@ class RandomPlayer(Player):
         super().__init__()
         random.seed()
 
-    def move(self, game, state, moves):
-        return random.randint(0, len(moves)-1)
+    def move(self, game, state):
+        return random.randint(0, len(game.get_moves(state))-1)

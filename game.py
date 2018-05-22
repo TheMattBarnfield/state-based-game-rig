@@ -27,7 +27,7 @@ class Game(ABC):
         """Have the next player make their turn"""
         moves = self.get_moves(state)
         current_player = state['players'][state['turn']]
-        move = current_player.move(self, state, moves)
+        move = current_player.move(self, state)
         assert move >= 0 and move < len(moves)
         return moves[move]
 

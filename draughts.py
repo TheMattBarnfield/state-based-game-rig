@@ -32,8 +32,9 @@ class DraughtsPiece(Enum):
 
     def king(self):
         """Promote a standard piece"""
-        assert self is DraughtsPiece.ALLY or self is DraughtsPiece.ENEMY
-        return DraughtsPiece(self.value*3 - 3)
+        if self is DraughtsPiece.ALLY or self is DraughtsPiece.ENEMY:
+            return DraughtsPiece(self.value*3 - 3)
+        return self
 
 
     def __str__(self):
@@ -54,10 +55,10 @@ class Draughts(Game):
             board.append([DraughtsPiece.ENEMY]*4)
         return board
 
-
-    def get_moves(self, state):
+    @classmethod
+    def get_moves(cls, state):
         """Get a list of states that can be moved to"""
-        board = self.unpack(state)
+        board = Draughts.unpack(state)
         take_moves = Draughts.get_take_moves(state, board)
         if take_moves:
             return take_moves
@@ -79,7 +80,10 @@ class Draughts(Game):
                 new_j = j + j_diff
                 if board[new_i][new_j] is DraughtsPiece.EMPTY:
                     new_board = deepcopy(board)
-                    new_board[new_i][new_j] = piece
+                    if new_i == 7:
+                        new_board[new_i][new_j] = piece.king()
+                    else:
+                        new_board[new_i][new_j] = piece
                     new_board[i][j] = DraughtsPiece.EMPTY
                     moves.append(Draughts.update_board(state, new_board))
 
@@ -183,6 +187,8 @@ class Draughts(Game):
         """Check for terminating state"""
         allies = 0
         enemies = 0
+        if not Draughts.get_moves(state):
+            return -1
         for row in state['board']:
             for piece in row:
                 if piece is DraughtsPiece.ALLY or piece is DraughtsPiece.ALLY_KING:

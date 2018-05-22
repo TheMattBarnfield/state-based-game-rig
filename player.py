@@ -7,6 +7,6 @@ class Player(ABC):
     def __init__(self):
         pass
 
-    def move(self, game, state, moves):
+    def move(self, game, state):
         """Make a move given the game state"""
         pass
