@@ -1,5 +1,21 @@
 """Module for abstract game class"""
 from abc import ABC
+from enum import Enum, unique
+
+@unique
+class GameState(Enum):
+    """DraughtsPiece type enumeration"""
+    ONGOING = 0
+    WIN = 1
+    DRAW = 2
+    LOSS = 3
+
+    def score(self):
+        """Score each state from -1 to 1"""
+        return [0, 1, 0, -1][int(self.value)]
+
+    def __str__(self):
+        return ['Ongoing', 'Win', 'Draw', 'Loss'][int(self.value)]
 
 class Game(ABC):
     """Game ABC"""

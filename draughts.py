@@ -3,7 +3,7 @@ from copy import deepcopy
 from enum import Enum, unique
 from itertools import product
 
-from game import Game
+from game import Game, GameState
 
 @unique
 class DraughtsPiece(Enum):
@@ -43,6 +43,15 @@ class DraughtsPiece(Enum):
 
 class Draughts(Game):
     """Game ABC"""
+
+    def __init__(self, max_ply):
+        super().__init__()
+        self.max_ply = max_ply
+
+    def new_game(self, players):
+        state = super().new_game(players)
+        state['ply'] = 0
+        return state
 
     def initial_board(self):
         """Create the initial board"""
@@ -162,7 +171,8 @@ class Draughts(Game):
         return {
             'players' : state['players'],
             'turn'    : 1-state['turn'],
-            'board'   : Draughts.pack(board)
+            'board'   : Draughts.pack(board),
+            'ply'     : state['ply'] + 1
         }
 
 
@@ -188,18 +198,20 @@ class Draughts(Game):
         allies = 0
         enemies = 0
         if not Draughts.get_moves(state):
-            return -1
+            return GameState.LOSS
         for row in state['board']:
             for piece in row:
-                if piece is DraughtsPiece.ALLY or piece is DraughtsPiece.ALLY_KING:
+                if piece.is_ally():
                     allies += 1
-                elif piece is not DraughtsPiece.EMPTY:
+                elif piece.is_enemy():
                     enemies += 1
         if enemies == 0:
-            return 1
-        elif allies == 0:
-            return -1
-        return 0
+            return GameState.WIN
+        if allies == 0:
+            return GameState.LOSS
+        if state["ply"] == self.max_ply:
+            return GameState.DRAW
+        return GameState.ONGOING
 
     @classmethod
     def unpack(cls, state):

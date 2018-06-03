@@ -26,7 +26,7 @@ class MinimaxPlayer(Player):
         """
         Implements the minimax making use of the perspective_change funciton
         """
-        value = game.evaluate(state)
+        value = game.evaluate(state).score()
         if not value == 0:
             return value
 
