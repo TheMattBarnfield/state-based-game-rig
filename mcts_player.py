@@ -9,7 +9,7 @@ from game import GameState
 class MCTSPlayer(Player):
     """Player that selects moves based on MCTS, with a preset time per move"""
 
-    def __init__(self, time_limit, max_depth):
+    def __init__(self, time_limit, max_depth=-1):
         super().__init__()
         self.time_limit = time_limit
         self.max_depth = max_depth
@@ -61,7 +61,7 @@ class MCTSPlayer(Player):
         active = True
         state = node["state"]
         result = game.evaluate(state)
-        while depth < self.max_depth and result == GameState.ONGOING:
+        while depth != self.max_depth and result == GameState.ONGOING:
             depth += 1
             state = random.choice(game.get_moves(state))
             result = game.evaluate(state)

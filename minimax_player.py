@@ -1,11 +1,12 @@
 """Play a fixed depth minimax search"""
 from player import Player
 from draughts import DraughtsPiece
+from game import GameState
 
 class MinimaxPlayer(Player):
     """Minimax class"""
 
-    def __init__(self, depth, heuristic):
+    def __init__(self, depth=-1, heuristic=None):
         super().__init__()
         self.heuristic = heuristic
         self.depth = depth
@@ -15,7 +16,7 @@ class MinimaxPlayer(Player):
         max_val = -2
         choice = -1
         for i, move in enumerate(game.get_moves(state)):
-            node_value = -self.max(game, game.perspective_change(move), 0, max_val, -2)
+            node_value = -self.max(game, game.perspective_change(move), 0, -2, max_val)
             if node_value > max_val:
                 choice = i
                 max_val = node_value
@@ -26,9 +27,9 @@ class MinimaxPlayer(Player):
         """
         Implements the minimax making use of the perspective_change funciton
         """
-        value = game.evaluate(state).score()
-        if not value == 0:
-            return value
+        gamestate = game.evaluate(state)
+        if gamestate is not GameState.ONGOING:
+            return gamestate.score()
 
         moves = game.get_moves(state)
 
@@ -37,13 +38,16 @@ class MinimaxPlayer(Player):
 
         if depth == self.depth:
             return self.heuristic(state)
-        max_val = -1
+
+        max_val = -2
         for move in moves:
-            min_val = -self.max(game, game.perspective_change(move), depth+1, max_val, alpha)
-            if min_val < -alpha:
-                return min_val
-            if min_val > max_val:
-                max_val = min_val
+            node_val = -self.max(game, game.perspective_change(move), depth+1, beta, alpha)
+            if node_val > max_val:
+                max_val = node_val
+            if node_val > alpha:
+                alpha = node_val
+            if max_val >= -beta:
+                return max_val
         return max_val
 
     @classmethod

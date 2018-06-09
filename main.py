@@ -1,5 +1,6 @@
-"""Module to play draughts with ML"""
+"""Module to play games with ML"""
 from draughts import Draughts
+from tictactoe import Tictactoe
 from game import GameState
 from human_player import HumanPlayer
 from random_player import RandomPlayer
@@ -8,12 +9,12 @@ from mcts_player import MCTSPlayer
 
 def main():
     """Program entrypoint"""
-    matches = 2
-    view = True
+    matches = 10
+    view = False
     scores = [0, 0]
-    game = Draughts(100)
-    player_one = MCTSPlayer(120, 100)
-    player_two = MinimaxPlayer(3, MinimaxPlayer.draughts_count_heuristic)
+    game = Tictactoe()
+    player_one = MCTSPlayer(5)
+    player_two = MCTSPlayer(30)
     for match in range(matches):
         state = None
         if match % 2 == 0:
@@ -24,6 +25,7 @@ def main():
             if view and state['turn'] == match%2:
                 print(game.display(state))
             state = game.play_turn(state)
+        print(game.display(state))
         score = game.evaluate(state).score()
         score = (score+1)/2
         if match % 2 == 0:

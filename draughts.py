@@ -176,9 +176,7 @@ class Draughts(Game):
         }
 
 
-    @classmethod
-    def perspective_change(cls, state):
-        """Flip the game state to the other player's point of view"""
+    def perspective_change(self, state, new_player):
         new_state = state.copy()
         new_state['board'] = []
         for row in reversed(state['board']):
@@ -190,7 +188,7 @@ class Draughts(Game):
 
 
     def play_turn(self, state):
-        return Draughts.perspective_change(super().play_turn(state))
+        return self.perspective_change(super().play_turn(state), 1-state['turn'])
 
 
     def evaluate(self, state):

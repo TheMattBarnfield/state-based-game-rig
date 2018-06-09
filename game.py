@@ -47,6 +47,10 @@ class Game(ABC):
         assert move >= 0 and move < len(moves)
         return moves[move]
 
+    def perspective_change(self, state, new_player):
+        """Flip the board to another player's perspective"""
+        pass
+
     def get_moves(self, state):
         """List of states that can be accessed by a move"""
         pass
